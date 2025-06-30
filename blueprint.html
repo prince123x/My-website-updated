@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Factory Blueprint Gallery</title>
+  <style>
+    body {
+      background-color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      color: #222;
+    }
+
+    .blueprint {
+      margin: 30px 0;
+    }
+
+    img {
+      max-width: 90%;
+      max-height: 400px;
+      border: 2px solid #333;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    img:hover {
+      transform: scale(1.02);
+    }
+
+    .caption {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Factory Blueprint Gallery</h1>
+
+  <div class="blueprint">
+    <img src="SunSides_BoilerSetup.png" alt="SunSides Boiler Setup" onclick="openFullscreen(this)">
+    <div class="caption">SunSides's Boiler Setup</div>
+  </div>
+
+  <div class="blueprint">
+    <img src="Firebox_Design2.png" alt="Firebox Design" onclick="openFullscreen(this)">
+    <div class="caption">Firebox Design 2</div>
+  </div>
+
+  <script>
+    function openFullscreen(img) {
+      if (img.requestFullscreen) {
+        img.requestFullscreen();
+      } else if (img.webkitRequestFullscreen) {
+        img.webkitRequestFullscreen();
+      } else if (img.msRequestFullscreen) {
+        img.msRequestFullscreen();
+      }
+    }
+  </script>
+
+</body>
+</html>

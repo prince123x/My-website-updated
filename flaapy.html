@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flappy Birthday</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: url("images14.jpeg") no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    canvas {
+      display: block;
+      margin: auto;
+      background-color: transparent;
+    }
+
+    #restartBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: none;
+      background: white;
+      color: red;
+      display: none;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="game" width="320" height="500"></canvas>
+<button id="restartBtn">Restart</button>
+
+<script>
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  const restartBtn = document.getElementById("restartBtn");
+
+  let birdY = 150;
+  let birdV = 0;
+  const gravity = 0.4;
+  const jumpStrength = -4;
+  const maxFallSpeed = 5;
+  let pipeX = canvas.width;
+  let pipeY = Math.random() * 200 + 100;
+  let score = 0;
+  let isGameOver = false;
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Bird
+    ctx.fillStyle = "yellow";
+    ctx.beginPath();
+    ctx.arc(50, birdY, 15, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Pipes
+    ctx.fillStyle = "green";
+    ctx.fillRect(pipeX, 0, 50, pipeY - 80); // Top
+    ctx.fillRect(pipeX, pipeY + 80, 50, canvas.height); // Bottom
+
+    // Gravity with max speed
+    birdV += gravity;
+    if (birdV > maxFallSpeed) birdV = maxFallSpeed;
+    birdY += birdV;
+
+    // Move pipe
+    pipeX -= 2;
+
+    if (pipeX < -50) {
+      pipeX = canvas.width;
+      pipeY = Math.random() * 200 + 100;
+      score++;
+    }
+
+    // Collision
+    if (
+      birdY > canvas.height ||
+      birdY < 0 ||
+      (50 > pipeX && 50 < pipeX + 50 &&
+        (birdY < pipeY - 80 || birdY > pipeY + 80))
+    ) {
+      isGameOver = true;
+      restartBtn.style.display = "block";
+      ctx.fillStyle = "black";
+      ctx.font = "24px Arial";
+      ctx.fillText("Game Over!", 90, 250);
+      ctx.fillText("Score: " + score, 110, 280);
+      return;
+    }
+
+    // Score
+    ctx.fillStyle = "black";
+    ctx.font = "20px Arial";
+    ctx.fillText("Score: " + score, 10, 30);
+
+    if (!isGameOver) requestAnimationFrame(draw);
+  }
+
+  function flap() {
+    if (!isGameOver) birdV = jumpStrength;
+  }
+
+  document.addEventListener("click", flap);
+  document.addEventListener("touchstart", flap);
+
+  restartBtn.onclick = () => {
+    birdY = 150;
+    birdV = 0;
+    pipeX = canvas.width;
+    score = 0;
+    isGameOver = false;
+    restartBtn.style.display = "none";
+    draw();
+  };
+
+  draw();
+</script>
+
+</body>
+</html>
