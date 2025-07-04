@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Game Menu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url("images13.jpeg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: brightness(0.4);
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 28px;
+    }
+
+    .button {
+      display: inline-block;
+      margin: 10px;
+      padding: 15px 25px;
+      background-color: red;
+      color: white;
+      font-size: 18px;
+      text-decoration: none;
+      border-radius: 10px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .button:hover {
+      background-color: darkred;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 600px) {
+      .button {
+        font-size: 16px;
+        padding: 12px 20px;
+        width: 80%;
+        max-width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to My Game Zone</h1>
+
+  <a href="flaapy.html" class="button">Play Flaapy Game</a>
+  <a href="welcome.html" class="button">Chucky</a>
+  <a href="blueprint.html" class="button">View Blueprint</a>
+  <a href="https://docs.google.com/presentation/d/1TrsvBq4n6SAR_AZLLULWQvGibpAJbAtq7TyWoXnJ8FA/edit?usp=drivesdk" 
+     class="button" target="_blank">New Blueprint</a>
+</body>
+</html>
