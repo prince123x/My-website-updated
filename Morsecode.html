@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>🎵💬 Morse Code Converter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: monospace;
+      text-align: center;
+      padding: 20px;
+      background-color: #f4f4f8;
+    }
+    textarea {
+      width: 90%;
+      height: 80px;
+      margin: 10px 0;
+      font-size: 18px;
+      padding: 10px;
+      resize: none;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 5px;
+      border: none;
+      background-color: #4a63ff;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:active {
+      background-color: #3242c5;
+    }
+    .error {
+      color: red;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    .mic-btn {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎵💬 Morse Code Converter</h1>
+
+  <textarea id="textInput" placeholder="Type your message..." oninput="convertToMorse()"></textarea>
+  <textarea id="morseOutput" readonly placeholder="📡 Morse code appears here..."></textarea><br>
+
+  <button onclick="copyMorse()">📋 Copy</button>
+  <button onclick="playMorse()">🔊 Play Sound</button>
+  <button class="mic-btn" onclick="startSpeech()">🎤 Speak (dot dash)</button>
+  <button onclick="playMoscowSOS()">🆘 SOS (Moscow Style)</button>
+
+  <div id="error" class="error"></div>
+
+  <script>
+    const morseMap = {
+      A: "._",     B: "_...",   C: "_._.",
+      D: "_..",    E: ".",      F: ".._.",
+      G: "__.",    H: "....",   I: "..",
+      J: ".___",   K: "_._",    L: "._..",
+      M: "__",     N: "_.",     O: "___",
+      P: ".__.",   Q: "__._",   R: "._.",
+      S: "...",    T: "_",      U: ".._",
+      V: "..._",   W: ".__",    X: "_.._",
+      Y: "_.__",   Z: "__..",
+      0: "_____",  1: ".____",  2: "..___",
+      3: "...__",  4: "...._",  5: ".....",
+      6: "_....",  7: "__...",  8: "___..",
+      9: "____.",  " ": " "
+    };
+
+    const reverseMorseMap = {};
+    for (let key in morseMap) {
+      reverseMorseMap[morseMap[key]] = key;
+    }
+
+    function convertToMorse() {
+      const text = document.getElementById("textInput").value.toUpperCase();
+      let morse = "";
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        if (morseMap[char]) {
+          morse += morseMap[char] + " ";
+        }
+      }
+      document.getElementById("morseOutput").value = morse.trim();
+    }
+
+    function copyMorse() {
+      const output = document.getElementById("morseOutput");
+      output.select();
+      document.execCommand("copy");
+    }
+
+    function playMorse() {
+      const morse = document.getElementById("morseOutput").value;
+      let i = 0;
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+      function playNext() {
+        if (i >= morse.length) return;
+        let char = morse[i];
+        i++;
+
+        if (char === ".") {
+          playBeep(audioCtx, 700, 0.1);
+          setTimeout(playNext, 200); // Small gap
+        } else if (char === "_") {
+          playBeep(audioCtx, 700, 0.3);
+          setTimeout(playNext, 500); // Dash gap
+        } else {
+          setTimeout(playNext, 150); // Space gap
+        }
+      }
+
+      playNext();
+    }
+
+    function playBeep(audioCtx, freq, duration) {
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + duration);
+    }
+
+    function playMoscowSOS() {
+      document.getElementById("morseOutput").value = "... ___ ...";
+      playMorse();
+    }
+
+    function startSpeech() {
+      const errorBox = document.getElementById("error");
+      errorBox.textContent = "";
+
+      if (!('webkitSpeechRecognition' in window)) {
+        errorBox.textContent = "❌ Speech recognition not supported.";
+        return;
+      }
+
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript.toLowerCase();
+        const cleaned = transcript.replace(/dot/g, ".").replace(/dash|underscore/g, "_").replace(/ /g, " ");
+        const morseChars = cleaned.trim().split(" ");
+        let decoded = "";
+
+        for (let m of morseChars) {
+          if (reverseMorseMap[m]) {
+            decoded += reverseMorseMap[m];
+          }
+        }
+
+        document.getElementById("textInput").value = decoded;
+        convertToMorse();
+      };
+
+      recognition.onerror = function(event) {
+        errorBox.textContent = "❌ Mic error or permission denied.";
+      };
+
+      recognition.start();
+    }
+  </script>
+</body>
+</html>
